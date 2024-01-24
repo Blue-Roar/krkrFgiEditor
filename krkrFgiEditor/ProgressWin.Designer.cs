@@ -34,21 +34,22 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(12, 17);
+            this.progressBar.Location = new System.Drawing.Point(8, 11);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(554, 35);
+            this.progressBar.Size = new System.Drawing.Size(369, 23);
             this.progressBar.TabIndex = 0;
             // 
             // ProgressWin
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(578, 69);
+            this.ClientSize = new System.Drawing.Size(385, 46);
+            this.ControlBox = false;
             this.Controls.Add(this.progressBar);
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProgressWin";

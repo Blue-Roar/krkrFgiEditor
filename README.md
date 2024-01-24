@@ -1,6 +1,10 @@
 # krkrFgiEditor
 吉里吉里立绘合成工具
 
+## 注意
+此Fork纯属图一乐，~~追求生产力/稳定性~~任何情况下仍建议使用[CjangCjengh/krkrFgiEditor](https://github.com/CjangCjengh/krkrFgiEditor)的原版本
+![](Screenshot.png)
+
 ## 一、合成单张立绘
 
 1、打开坐标文件，格式为txt或json，名字一般为角色名，如：芳乃a.txt、寧々a_0.txt、face白狗a.txt、あやせa.pbd.json等。

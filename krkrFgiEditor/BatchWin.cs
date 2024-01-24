@@ -53,12 +53,6 @@ namespace krkrFgiEditor
             fbd.Dispose();
         }
 
-        private void SavePath_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == '\r')
-                CreateFolder(savePath.Text);
-        }
-
         private bool CreateFolder(string path)
         {
             if (string.IsNullOrEmpty(path))

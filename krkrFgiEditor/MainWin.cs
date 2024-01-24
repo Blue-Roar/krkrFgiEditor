@@ -20,11 +20,13 @@ namespace krkrFgiEditor
                 Encoding.UTF8,
                 Encoding.Unicode,
             };
-            selectedBoxTip.SetToolTip(selectedBox, "按backspace删除当前项");
-            fgiBoxTip.SetToolTip(fgiBox, "点击查看大图");
+            //mainToolTip.SetToolTip(selectedBox, "按backspace删除当前项");
+            //mainToolTip.SetToolTip(fgiBox, "点击查看大图");
             groupLayers = new List<GroupLayer>();
             selectedLayers = new List<Layer>();
             layerAlphas = new Dictionary<int, int>();
+            Width -= (fgiBox.Width + 11);
+            openFile.Focus();
         }
 
         private Image resultImage;
@@ -57,16 +59,6 @@ namespace krkrFgiEditor
             if (ofd.ShowDialog() == DialogResult.OK)
                 Initialize(filePath.Text = ofd.FileName);
             ofd.Dispose();
-        }
-
-        private void FilePath_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == '\r')
-                if (!File.Exists(filePath.Text))
-                    MessageBox.Show("文件不存在！", "",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else
-                    Initialize(filePath.Text);
         }
 
         private void ClearAll()
@@ -167,7 +159,7 @@ namespace krkrFgiEditor
                 foreach (string layerId in errorImages)
                     message += $"{character}_{layerId}、";
                 message = message.Substring(0, message.Length - 1);
-                MessageBox.Show(message, "",
+                MessageBox.Show(message, "警告",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             encodingLabel.Enabled = true;
@@ -175,7 +167,7 @@ namespace krkrFgiEditor
             detectEncoding.Enabled = true;
             if (IsEmpty(groupLayers))
             {
-                MessageBox.Show("加载失败！", "",
+                MessageBox.Show("加载失败！", "错误",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -259,14 +251,14 @@ namespace krkrFgiEditor
                 foreach (string layerId in errorImages)
                     message += $"{character}_{layerId}、";
                 message = message.Substring(0, message.Length - 1);
-                MessageBox.Show(message, "",
+                MessageBox.Show(message, "警告",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             encodingBox.DropDownStyle = ComboBoxStyle.DropDown;
             encodingBox.Text = "ASCII";
             if (IsEmpty(groupLayers))
             {
-                MessageBox.Show("加载失败！", "",
+                MessageBox.Show("加载失败！", "错误",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -291,6 +283,13 @@ namespace krkrFgiEditor
 
         private void InitializeGroupBox(ComboBox box)
         {
+            List<GroupLayer> layersToRemove = new List<GroupLayer>();
+            foreach (GroupLayer groupLayer in groupLayers)
+                if (groupLayer.layers.Count <= 0)
+                    layersToRemove.Add(groupLayer);
+            foreach (GroupLayer groupLayer in layersToRemove)
+                groupLayers.Remove(groupLayer);
+
             foreach (GroupLayer groupLayer in groupLayers)
                 box.Items.Add(groupLayer.name);
             box.SelectedIndex = 0;
@@ -298,8 +297,11 @@ namespace krkrFgiEditor
 
         private void Layer_HoveredIndexChanged(object sender, EventArgs e)
         {
-            if (layerBox.HoveredIndex == -1 ||
-                selectedLayers.Contains(groupLayers[groupBox.SelectedIndex].layers[layerBox.HoveredIndex]))
+            if (layerBox.HoveredIndex == -1)
+            {
+
+            }
+            else if (selectedLayers.Contains(groupLayers[groupBox.SelectedIndex].layers[layerBox.HoveredIndex]))
                 ShowFgi(ResultImage);
             else
             {
@@ -330,6 +332,7 @@ namespace krkrFgiEditor
                 box.Items.Add(layer.name);
             box.DropDownHeight = Math.Min(box.Items.Count, 10) * 100 + 2;
             box.SelectedIndex = -1;
+            if (box.Items.Count > 0) box.SelectedIndex = 0;
         }
 
         private void LayerBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -384,8 +387,10 @@ namespace krkrFgiEditor
                 cancelButton.Enabled = true;
         }
 
+
         private void GroupBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            CheckAdd();
             SetLayerBox(layerBox, groupBox.SelectedIndex);
         }
 
@@ -464,11 +469,13 @@ namespace krkrFgiEditor
             if (selectedBox.Items.Count > 0)
             {
                 saveButton.Enabled = true;
+                previewButton.Enabled = true;
                 fgiBox.Enabled = true;
             }
             else
             {
                 saveButton.Enabled = false;
+                previewButton.Enabled = false;
                 fgiBox.Enabled = false;
             }
             ResultImage = Layer.GenerateImage(selectedLayers);
@@ -509,16 +516,16 @@ namespace krkrFgiEditor
             else
                 fgiBox.Image = Program.ResizeImage(image,
                     fgiBox.Width, fgiBox.Height);
+            preview.UpdateCG(image);
         }
 
         private void FgiBox_Click(object sender, EventArgs e)
         {
-            PictureWin pw = new PictureWin(ResultImage)
-            {
-                Text = GetResultName(selectedLayers)
-            };
-            pw.ShowDialog();
-            pw.Dispose();
+            //PictureWin pw = new PictureWin(ResultImage, GetResultName(selectedLayers));
+            //pw.ShowDialog();
+            //pw.Dispose();
+            //new PictureWin(ResultImage, GetResultName(selectedLayers)).Show();
+            new PreviewWin().LoadCG(GetResultName(selectedLayers), ResultImage);
         }
 
         private string GetResultName(List<Layer> layers)
@@ -635,5 +642,44 @@ namespace krkrFgiEditor
             bw.ShowDialog();
             bw.Dispose();
         }
+
+        private void previewButton_Click(object sender, EventArgs e)
+        {
+            //HidePreview();
+            new PreviewWin().LoadCG(GetResultName(selectedLayers), ResultImage);
+        }
+
+        PreviewWin preview = new PreviewWin();
+        private void MainWin_Load(object sender, EventArgs e)
+        {
+            preview.LoadCG("预览", null, true, this);
+        }
+
+        private void MainWin_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            preview.Close();
+        }
+
+        public void SwapPreview()
+        {
+            if (preview.Visibility == System.Windows.Visibility.Visible)
+            {
+                preview.Visibility = System.Windows.Visibility.Hidden;
+                Width += (fgiBox.Width + 11);
+                swapPreviewButton.Text = "<<";
+            }
+            else
+            {
+                preview.Visibility = System.Windows.Visibility.Visible;
+                Width -= (fgiBox.Width + 11);
+                swapPreviewButton.Text = ">>";
+            }
+        }
+
+        private void swapPreviewButton_Click(object sender, EventArgs e)
+        {
+            SwapPreview();
+        }
+
     }
 }

@@ -92,17 +92,14 @@
     <Compile Include="BatchWin.Designer.cs">
       <DependentUpon>BatchWin.cs</DependentUpon>
     </Compile>
+    <Compile Include="PreviewWin.xaml.cs">
+      <DependentUpon>PreviewWin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProgressWin.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ProgressWin.Designer.cs">
       <DependentUpon>ProgressWin.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PictureWin.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PictureWin.Designer.cs">
-      <DependentUpon>PictureWin.cs</DependentUpon>
     </Compile>
     <Compile Include="ListBoxEx.cs">
       <SubType>Component</SubType>
@@ -123,9 +120,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ProgressWin.resx">
       <DependentUpon>ProgressWin.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PictureWin.resx">
-      <DependentUpon>PictureWin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWin.resx">
       <DependentUpon>MainWin.cs</DependentUpon>
@@ -167,6 +161,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="PreviewWin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
